@@ -87,7 +87,7 @@ def find_pure_symbol(symbols, clauses, model):
                 elif value is False:
                     is_pure = False
                     break
-            elif -symbol in clause:
+            elif f"-{symbol}" in clause:
                 if value is None:
                     value = False
                 elif value is True:
@@ -106,18 +106,15 @@ def find_unit_clause(clauses, model):
     :return: Tuple (unit_clause, value) if a unit clause is found, (None, None) otherwise
     """
     for clause in clauses:
-        unassigned_symbols = [symbol for symbol in clause if abs(symbol) not in model]
+        unassigned_symbols = [symbol for symbol in clause if symbol not in model and f"-{symbol}" not in model]
         if len(unassigned_symbols) == 1:
             unit_symbol = unassigned_symbols[0]
-            if (unit_symbol > 0):
-                value = True 
-            else:
-                value = False
-            return abs(unit_symbol), value
+            value = True if unit_symbol[0] != '-' else False
+            return unit_symbol.lstrip('-'), value
     return None, None
 
 # Example usage
-clauses = [[1, 2], [-1, 3], [-2, 3]]
+clauses = [[1, 2, -3], [-1, -2, 3], [1,-2, 3]]
 symbols = [1, 2, 3]
 model = {}
 print(dpll(clauses, symbols, model))  # Output: True or False depending on satisfiability
