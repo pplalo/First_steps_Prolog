@@ -114,7 +114,59 @@ def find_unit_clause(clauses, model):
     return None, None
 
 # Example usage
+model = {}
 clauses = [[1, 2, -3], [-1, -2, 3], [1,-2, 3]]
 symbols = [1, 2, 3]
+print(dpll(clauses, symbols, model))
+
 model = {}
+clauses = [["A", "B", "C"], ["A", "B", "-C"]]
+symbols = ["A", "B", "C"]
+print(dpll(clauses, symbols, model))
+
+model = {}  
+clauses = [["A" or "B"]]
+symbols = ["A", "B"]
 print(dpll(clauses, symbols, model))  # Output: True or False depending on satisfiability
+
+# model = {}
+# clauses = [["A" and "-B"] or ["B"]]
+# symbols = ["A", "B"]
+# print(dpll(clauses, symbols, model))
+
+model = {}
+clauses = [["1" and "- 2"] and ["2"] or ["-1"]] 
+symbols = ["1","2"]
+print(dpll(clauses, symbols, model))
+
+def dpll_satisfiable(proposition):
+    """
+    Check if a propositional logic formula is satisfiable using the DPLL algorithm.
+    
+    :param proposition: Propositional logic formula as a string
+    :return: True if the formula is satisfiable, False otherwise
+    """
+    clauses, symbols = parse_proposition(proposition)
+    model = {}
+    return dpll(clauses, symbols, model)
+
+def parse_proposition(proposition):
+    """
+    Parse a propositional logic formula into a list of clauses and a list of symbols.
+    
+    :param proposition: Propositional logic formula as a string
+    :return: Tuple (clauses, symbols)
+    """
+    clauses = []
+    symbols = set()
+    for clause in proposition.split(","):
+        literals = clause.split("^")
+        clause_symbols = set()
+        for literal in literals:
+            symbol = int(literal)
+            clause_symbols.add(symbol)
+            symbols.add(symbol)
+        clauses.append(list(clause_symbols))
+    return clauses, list(symbols)
+
+print(parse_proposition("1^2^3,1^2^-3,-1^2^3"))
