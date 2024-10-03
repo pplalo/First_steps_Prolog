@@ -1,18 +1,18 @@
 def dpll(clauses, symbols, model):
     """
-    DPLL algorithm to determine the satisfiability of a propositional logic formula.
+    DPLL algorithm to determine whether is True or False a propositional logic formula.
     
-    :param clauses: List of clauses (each clause is a list of literals)
-    :param symbols: List of propositional symbols
-    :param model: Current model (dictionary of symbol assignments)
-    :return: True if the formula is satisfiable, False otherwise
+    clauses: List of clauses (each clause is a list of literals)
+    symbols: List of propositional symbols
+    model: Current model (dictionary of symbol assignments)
+    return: True if the formula is satisfiable, False otherwise
     """
     # Base case: if all clauses are true in the model, return True
-    if all(is_clause_true(clause, model) for clause in clauses):
+    if all(check_true(clause, model) for clause in clauses):
         return True
     
     # Base case: if any clause is false in the model, return False
-    if any(is_clause_false(clause, model) for clause in clauses):
+    if any(check_false(clause, model) for clause in clauses):
         return False
     
     # Find a pure symbol and its value
@@ -46,23 +46,23 @@ def dpll(clauses, symbols, model):
     new_model_false[P] = False
     return dpll(clauses, rest, new_model_false)
 
-def is_clause_true(clause, model):
+def check_true(clause, model):
     """
     Check if a clause is true in the given model.
     
-    :param clause: List of literals
-    :param model: Current model (dictionary of symbol assignments)
-    :return: True if the clause is true in the model, False otherwise
+    clause: List of literals
+    model: Current model (dictionary of symbol assignments)
+    return: True if the clause is true in the model, False otherwise
     """
     return any(literal in model and model[literal] for literal in clause)
 
-def is_clause_false(clause, model):
+def check_false(clause, model):
     """
     Check if a clause is false in the given model.
     
-    :param clause: List of literals
-    :param model: Current model (dictionary of symbol assignments)
-    :return: True if the clause is false in the model, False otherwise
+    clause: List of literals
+    model: Current model (dictionary of symbol assignments)
+    return: True if the clause is false in the model, False otherwise
     """
     return all(literal in model and not model[literal] for literal in clause)
 
@@ -70,10 +70,10 @@ def find_pure_symbol(symbols, clauses, model):
     """
     Find a pure symbol and its value.
     
-    :param symbols: List of propositional symbols
-    :param clauses: List of clauses
-    :param model: Current model (dictionary of symbol assignments)
-    :return: Tuple (pure_symbol, value) if a pure symbol is found, (None, None) otherwise
+    symbols: List of propositional symbols
+    clauses: List of clauses
+    model: Current model (dictionary of symbol assignments)
+    return: Tuple (pure_symbol, value) if a pure symbol is found, (None, None) otherwise
     """
     for symbol in symbols:
         is_pure = True
@@ -87,7 +87,7 @@ def find_pure_symbol(symbols, clauses, model):
                 elif value is False:
                     is_pure = False
                     break
-            elif f"-{symbol}" in clause:
+            elif -symbol in clause:
                 if value is None:
                     value = False
                 elif value is True:
@@ -101,72 +101,29 @@ def find_unit_clause(clauses, model):
     """
     Find a unit clause and its value.
     
-    :param clauses: List of clauses
-    :param model: Current model (dictionary of symbol assignments)
-    :return: Tuple (unit_clause, value) if a unit clause is found, (None, None) otherwise
+    clauses: List of clauses
+    model: Current model (dictionary of symbol assignments)
+    return: Tuple (unit_clause, value) if a unit clause is found, (None, None) otherwise
     """
     for clause in clauses:
-        unassigned_symbols = [symbol for symbol in clause if symbol not in model and f"-{symbol}" not in model]
+        unassigned_symbols = [symbol for symbol in clause if abs(symbol) not in model]
         if len(unassigned_symbols) == 1:
             unit_symbol = unassigned_symbols[0]
-            value = True if unit_symbol[0] != '-' else False
-            return unit_symbol.lstrip('-'), value
+            if (unit_symbol > 0):
+                value = True 
+            else:
+                value = False
+            return abs(unit_symbol), value
     return None, None
 
-# Example usage
-model = {}
-clauses = [[1, 2, -3], [-1, -2, 3], [1,-2, 3]]
+# Example  1 with True output
+clauses = [[1, 2], [-1, 3], [-2, 3]]
 symbols = [1, 2, 3]
-print(dpll(clauses, symbols, model))
-
 model = {}
-clauses = [["A", "B", "C"], ["A", "B", "-C"]]
-symbols = ["A", "B", "C"]
 print(dpll(clauses, symbols, model))
 
-model = {}  
-clauses = [["A" or "B"]]
-symbols = ["A", "B"]
-print(dpll(clauses, symbols, model))  # Output: True or False depending on satisfiability
-
-# model = {}
-# clauses = [["A" and "-B"] or ["B"]]
-# symbols = ["A", "B"]
-# print(dpll(clauses, symbols, model))
-
+# Example 2 with False output
+clauses = [[1, -2],[2]]
+symbols = [1, 2]
 model = {}
-clauses = [["1" and "- 2"] and ["2"] or ["-1"]] 
-symbols = ["1","2"]
 print(dpll(clauses, symbols, model))
-
-def dpll_satisfiable(proposition):
-    """
-    Check if a propositional logic formula is satisfiable using the DPLL algorithm.
-    
-    :param proposition: Propositional logic formula as a string
-    :return: True if the formula is satisfiable, False otherwise
-    """
-    clauses, symbols = parse_proposition(proposition)
-    model = {}
-    return dpll(clauses, symbols, model)
-
-def parse_proposition(proposition):
-    """
-    Parse a propositional logic formula into a list of clauses and a list of symbols.
-    
-    :param proposition: Propositional logic formula as a string
-    :return: Tuple (clauses, symbols)
-    """
-    clauses = []
-    symbols = set()
-    for clause in proposition.split(","):
-        literals = clause.split("^")
-        clause_symbols = set()
-        for literal in literals:
-            symbol = int(literal)
-            clause_symbols.add(symbol)
-            symbols.add(symbol)
-        clauses.append(list(clause_symbols))
-    return clauses, list(symbols)
-
-print(parse_proposition("1^2^3,1^2^-3,-1^2^3"))
