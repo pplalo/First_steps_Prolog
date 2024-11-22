@@ -37,3 +37,11 @@ def sum_out(var, factors):
     """
     return factors
 
+
+def pointwise_product(factors):
+    """
+    Computes the pointwise product of the list of factors.
+    """
+    return factors
+
+
