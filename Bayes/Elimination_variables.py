@@ -31,4 +31,9 @@ def make_factor(var, e, bn):
     """
     return 
 
+def sum_out(var, factors):
+    """
+    Sums out the given variable from the list of factors.
+    """
+    return factors
 
