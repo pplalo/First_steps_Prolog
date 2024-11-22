@@ -44,4 +44,8 @@ def pointwise_product(factors):
     """
     return factors
 
-
+def normalize(factor):
+    """
+    Normalizes the given factor.
+    """
+    return factor / np.sum(factor)
