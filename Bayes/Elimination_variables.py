@@ -25,4 +25,10 @@ def order(vars):
     """
     return vars
 
+def make_factor(var, e, bn):
+    """
+    Creates a factor for the given variable.
+    """
+    return 
+
 
