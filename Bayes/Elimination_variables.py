@@ -19,4 +19,10 @@ def eliminationAsk(X, e, bn):
     
     return normalize(pointwise_product(factors))
 
+def order(vars):
+    """
+    Orders the variables based on some heuristic.
+    """
+    return vars
+
 
