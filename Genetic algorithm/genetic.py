@@ -1,3 +1,6 @@
+# Genetic algorithm edited to fulfill the problem
+# of placing vending machines in university facilities.
+
 import numpy as np
 import random
 from utils import reproduce, mutate, put_major_value_coordinate
