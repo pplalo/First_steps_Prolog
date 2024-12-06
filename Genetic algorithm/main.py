@@ -1,3 +1,6 @@
+# Matrix of probabilities assigning one  space into a map in order to determine
+# the best position to place a vending machine in university facilities.
+
 import numpy as np
 import pprint
 from genetic import gen_algorithm
