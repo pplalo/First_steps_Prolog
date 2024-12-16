@@ -1,3 +1,5 @@
+# Prolog
+
 def dpll(clauses, symbols, model):
     """
     DPLL algorithm to determine whether is True or False a propositional logic formula.
